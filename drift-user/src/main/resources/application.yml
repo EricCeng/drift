@@ -1,0 +1,10 @@
+server:
+  port: 16781
+
+spring:
+  application:
+    name: drift-user-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848

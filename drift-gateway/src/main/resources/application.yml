@@ -1,0 +1,30 @@
+server:
+  port: 16780
+
+spring:
+  application:
+    name: drift-gateway-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    gateway:
+      routes:
+        - id: user_route
+          uri: lb://drift-user-service
+          predicates:
+            - Path=/drift/user/**
+        - id: post_route
+          uri: lb://drift-post-service
+          predicates:
+            - Path=/drift/post/**
+            - Path=/drift/like/**
+            - Path=/drift/collection/**
+        - id: comment_route
+          uri: lb://drift-comment-service
+          predicates:
+            - Path=/drift/comment/**
+        - id: follow_route
+          uri: lb://drift-follow-service
+          predicates:
+            - Path=/drift/follow/**

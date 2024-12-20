@@ -1,0 +1,10 @@
+server:
+  port: 16784
+
+spring:
+  application:
+    name: drift-follow-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848

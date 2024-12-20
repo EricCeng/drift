@@ -1,0 +1,10 @@
+server:
+  port: 16783
+
+spring:
+  application:
+    name: drift-comment-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
