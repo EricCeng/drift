@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.drift.post.mapper.PostMapper">
+    <select id="selectPostList" resultType="org.drift.post.bean.Post">
+        SELECT id,
+               user_id,
+               title,
+               image_url
+        FROM tbl_posts
+        <where>
+            <if test="authorId != null">
+                user_id = #{authorId}
+            </if>
+        </where>
+        ORDER BY update_time DESC
+        LIMIT #{page}, 20
+    </select>
+</mapper>

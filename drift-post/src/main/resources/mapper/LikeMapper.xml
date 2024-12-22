@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.drift.post.mapper.LikeMapper">
+    <select id="selectUserLikedCount" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM tbl_likes
+        WHERE author_id = #{authorId}
+    </select>
+
+    <select id="selectPostLikedCount" resultType="org.drift.common.pojo.like.PostLikedCountDto">
+        SELECT post_id AS postId,
+               COUNT(*) AS likedCount
+        FROM tbl_likes
+        <where>
+            post_id IN
+            <foreach collection="postIds" item="postId" index="index" open="(" close=")" separator=",">
+                #{postId}
+            </foreach>
+        </where>
+        GROUP BY post_id
+    </select>
+</mapper>

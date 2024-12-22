@@ -19,6 +19,12 @@
     </properties>
 
     <dependencies>
+        <!-- common module -->
+        <dependency>
+            <groupId>org.drift.common</groupId>
+            <artifactId>drift-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- Spring Cloud Alibaba Service Discovery -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
@@ -48,6 +54,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- Spring Cloud OpenFeign -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
@@ -64,6 +75,9 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
     </dependencies>
-
 </project>
