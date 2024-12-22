@@ -7,6 +7,11 @@ import org.drift.follow.bean.Follow;
 import org.drift.follow.mapper.FollowMapper;
 import org.drift.follow.service.FollowService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Jiakui_Zeng
@@ -38,5 +43,15 @@ public class FollowServiceImpl implements FollowService {
         return new FollowResponse()
                 .setFollowingCount(followMapper.selectFollowingCount(userId))
                 .setFollowerCount(followMapper.selectFollowerCount(userId));
+    }
+
+    @Override
+    public List<Long> getFollowingUsers(Long userId) {
+        List<Follow> follows = followMapper.selectList(new LambdaQueryWrapper<Follow>()
+                .eq(Follow::getFollowerId, userId));
+        if (ObjectUtils.isEmpty(follows)) {
+            return new ArrayList<>();
+        }
+        return follows.stream().map(Follow::getFollowedId).collect(Collectors.toList());
     }
 }

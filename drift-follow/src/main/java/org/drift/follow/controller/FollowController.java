@@ -6,6 +6,8 @@ import org.drift.common.pojo.follow.FollowResponse;
 import org.drift.follow.service.FollowService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @author Jiakui_Zeng
  * @date 2024/12/22 00:08
@@ -34,5 +36,10 @@ public class FollowController {
     @GetMapping("/info")
     public CommonResult<FollowResponse> getFollowInfo(@RequestParam("user_id") Long userId) {
         return CommonResult.success(followService.getFollowInfo(userId));
+    }
+
+    @GetMapping("following_users")
+    public CommonResult<List<Long>> getFollowingUsers(@RequestParam("user_id") Long userId) {
+        return CommonResult.success(followService.getFollowingUsers(userId));
     }
 }

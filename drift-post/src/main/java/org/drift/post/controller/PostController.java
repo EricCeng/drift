@@ -25,8 +25,9 @@ public class PostController {
 
     @GetMapping("/all_posts")
     public CommonResult<List<PostResponse>> getAllPosts(@RequestParam("user_id") Long userId,
+                                                        @RequestParam(value = "following", required = false) Boolean following,
                                                         @RequestParam("page") Integer page) {
-        return CommonResult.success(postService.getAllPosts(userId, page));
+        return CommonResult.success(postService.getAllPosts(userId, following, page));
     }
 
     @GetMapping("/personal_posts")

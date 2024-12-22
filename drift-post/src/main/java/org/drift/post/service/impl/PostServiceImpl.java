@@ -1,6 +1,7 @@
 package org.drift.post.service.impl;
 
 import org.drift.common.api.CommonResult;
+import org.drift.common.feign.FollowServiceClient;
 import org.drift.common.feign.UserServiceClient;
 import org.drift.common.pojo.like.PostLikedCountDto;
 import org.drift.common.pojo.post.PostResponse;
@@ -25,19 +26,30 @@ public class PostServiceImpl implements PostService {
     private final PostMapper postMapper;
     private final LikeService likeService;
     private final UserServiceClient userServiceClient;
+    private final FollowServiceClient followServiceClient;
 
     public PostServiceImpl(PostMapper postMapper,
                            LikeService likeService,
-                           UserServiceClient userServiceClient) {
+                           UserServiceClient userServiceClient,
+                           FollowServiceClient followServiceClient) {
         this.postMapper = postMapper;
         this.likeService = likeService;
         this.userServiceClient = userServiceClient;
+        this.followServiceClient = followServiceClient;
     }
 
     @Override
-    public List<PostResponse> getAllPosts(Long userId, Integer page) {
+    public List<PostResponse> getAllPosts(Long userId, Boolean following, Integer page) {
+        List<Long> followingUserIds = new ArrayList<>();
+        if (following != null && following) {
+            // 获取当前用户关注的用户ID
+            followingUserIds = followServiceClient.getFollowingUsers(userId).getData();
+            if (ObjectUtils.isEmpty(followingUserIds)) {
+                return new ArrayList<>();
+            }
+        }
         // 获取动态列表
-        List<Post> posts = postMapper.selectPostList(null, page);
+        List<Post> posts = postMapper.selectPostList(null, followingUserIds, page);
         if (ObjectUtils.isEmpty(posts)) {
             return new ArrayList<>();
         }
@@ -70,7 +82,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostResponse> getPersonalPosts(Long userId, Long authorId, Integer page) {
         // 获取动态列表
-        List<Post> posts = postMapper.selectPostList(authorId, page);
+        List<Post> posts = postMapper.selectPostList(authorId, null, page);
         if (ObjectUtils.isEmpty(posts)) {
             return new ArrayList<>();
         }

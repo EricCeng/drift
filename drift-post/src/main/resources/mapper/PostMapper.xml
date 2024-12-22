@@ -11,6 +11,12 @@
             <if test="authorId != null">
                 user_id = #{authorId}
             </if>
+            <if test="followingUserIds != null and followingUserIds.size() > 0">
+                user_id IN
+                <foreach collection="followingUserIds" item="userId" open="(" separator="," close=")">
+                    #{userId}
+                </foreach>
+            </if>
         </where>
         ORDER BY update_time DESC
         LIMIT #{page}, 20
