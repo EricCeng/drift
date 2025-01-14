@@ -1,9 +1,11 @@
 package org.drift.post.controller;
 
 import org.drift.common.api.CommonResult;
-import org.drift.common.pojo.post.PostRequest;
 import org.drift.post.service.LikeService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Jiakui_Zeng
@@ -19,14 +21,16 @@ public class LikeController {
     }
 
     @PostMapping("/like")
-    public CommonResult<?> like(@RequestBody PostRequest request) {
-        likeService.like(request);
+    public CommonResult<?> like(@RequestParam("post_id") Long postId,
+                                @RequestParam("author_id") Long authorId) {
+        likeService.like(postId, authorId);
         return CommonResult.success();
     }
 
     @PostMapping("/cancel")
-    public CommonResult<?> cancel(@RequestBody PostRequest request) {
-        likeService.cancel(request);
+    public CommonResult<?> cancel(@RequestParam("post_id") Long postId,
+                                  @RequestParam("author_id") Long authorId) {
+        likeService.cancel(postId, authorId);
         return CommonResult.success();
     }
 

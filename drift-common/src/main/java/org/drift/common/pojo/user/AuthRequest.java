@@ -8,7 +8,7 @@ import lombok.Data;
  * @date 2024/12/21 23:13
  */
 @Data
-public class RegisterationRequest {
+public class AuthRequest {
     private String username;
     private String password;
     @JsonProperty("re_password")

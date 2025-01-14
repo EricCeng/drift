@@ -1,7 +1,7 @@
 package org.drift.follow.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import org.drift.common.pojo.follow.FollowRequest;
+import org.drift.common.context.UserContextHolder;
 import org.drift.common.pojo.follow.FollowResponse;
 import org.drift.follow.bean.Follow;
 import org.drift.follow.mapper.FollowMapper;
@@ -26,15 +26,15 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Override
-    public void follow(FollowRequest request) {
-        followMapper.insert(new Follow().setFollowerId(request.getFollowerId()).setFollowedId(request.getFollowedId()));
+    public void follow(Long followedId) {
+        followMapper.insert(new Follow().setFollowerId(UserContextHolder.getUserContext()).setFollowedId(followedId));
     }
 
     @Override
-    public void unfollow(FollowRequest request) {
+    public void unfollow(Long followedId) {
         Follow follow = followMapper.selectOne(new LambdaQueryWrapper<Follow>()
-                .eq(Follow::getFollowerId, request.getFollowerId())
-                .eq(Follow::getFollowedId, request.getFollowedId()));
+                .eq(Follow::getFollowerId, UserContextHolder.getUserContext())
+                .eq(Follow::getFollowedId, followedId));
         followMapper.deleteById(follow);
     }
 

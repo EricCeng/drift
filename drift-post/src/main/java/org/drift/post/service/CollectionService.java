@@ -1,15 +1,13 @@
 package org.drift.post.service;
 
-import org.drift.common.pojo.post.PostRequest;
-
 /**
  * @author Jiakui_Zeng
  * @date 2024/12/22 00:36
  */
 public interface CollectionService {
-    void collect(PostRequest request);
+    void collect(Long postId, Long authorId);
 
-    void cancel(PostRequest request);
+    void cancel(Long postId, Long authorId);
 
     Long getUserCollectedCount(Long authorId);
 }

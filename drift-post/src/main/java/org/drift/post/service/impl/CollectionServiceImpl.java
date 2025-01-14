@@ -1,7 +1,7 @@
 package org.drift.post.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import org.drift.common.pojo.post.PostRequest;
+import org.drift.common.context.UserContextHolder;
 import org.drift.post.bean.Collection;
 import org.drift.post.mapper.CollectionMapper;
 import org.drift.post.service.CollectionService;
@@ -20,19 +20,19 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
-    public void collect(PostRequest request) {
+    public void collect(Long postId, Long authorId) {
         collectionMapper.insert(new Collection()
-                .setPostId(request.getPostId())
-                .setAuthorId(request.getAuthorId())
-                .setUserId(request.getUserId()));
+                .setPostId(postId)
+                .setAuthorId(authorId)
+                .setUserId(UserContextHolder.getUserContext()));
     }
 
     @Override
-    public void cancel(PostRequest request) {
+    public void cancel(Long postId, Long authorId) {
         Collection collection = collectionMapper.selectOne(new LambdaQueryWrapper<Collection>()
-                .eq(Collection::getPostId, request.getPostId())
-                .eq(Collection::getAuthorId, request.getAuthorId())
-                .eq(Collection::getUserId, request.getUserId()));
+                .eq(Collection::getPostId, postId)
+                .eq(Collection::getAuthorId, authorId)
+                .eq(Collection::getUserId, UserContextHolder.getUserContext()));
         collectionMapper.deleteById(collection);
     }
 

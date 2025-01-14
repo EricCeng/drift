@@ -6,7 +6,8 @@ package org.drift.common.api;
  */
 public enum ResultCode implements IErrorCode {
     SUCCESS(0, "成功"),
-    FAILED(500, "内部服务器错误"),
+    UNAUTHORIZED(401, "账号未登录"),
+    ERROR(500, "内部服务器错误"),
     ;
 
     private final int code;

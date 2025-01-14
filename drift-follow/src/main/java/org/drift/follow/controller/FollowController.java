@@ -1,7 +1,6 @@
 package org.drift.follow.controller;
 
 import org.drift.common.api.CommonResult;
-import org.drift.common.pojo.follow.FollowRequest;
 import org.drift.common.pojo.follow.FollowResponse;
 import org.drift.follow.service.FollowService;
 import org.springframework.web.bind.annotation.*;
@@ -22,14 +21,14 @@ public class FollowController {
     }
 
     @PostMapping("/follow")
-    public CommonResult<?> follow(@RequestBody FollowRequest request) {
-        followService.follow(request);
+    public CommonResult<?> follow(@RequestParam("followed_id") Long followedId) {
+        followService.follow(followedId);
         return CommonResult.success();
     }
 
     @PostMapping("/unfollow")
-    public CommonResult<?> unfollow(@RequestBody FollowRequest request) {
-        followService.unfollow(request);
+    public CommonResult<?> unfollow(@RequestParam("followed_id") Long followedId) {
+        followService.unfollow(followedId);
         return CommonResult.success();
     }
 

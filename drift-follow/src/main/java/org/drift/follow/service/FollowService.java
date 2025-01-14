@@ -1,6 +1,5 @@
 package org.drift.follow.service;
 
-import org.drift.common.pojo.follow.FollowRequest;
 import org.drift.common.pojo.follow.FollowResponse;
 
 import java.util.List;
@@ -10,9 +9,9 @@ import java.util.List;
  * @date 2024/12/22 00:08
  */
 public interface FollowService {
-    void follow(FollowRequest request);
+    void follow(Long followedId);
 
-    void unfollow(FollowRequest request);
+    void unfollow(Long followedId);
 
     FollowResponse getFollowInfo(Long userId);
 

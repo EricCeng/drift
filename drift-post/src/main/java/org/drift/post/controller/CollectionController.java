@@ -1,7 +1,6 @@
 package org.drift.post.controller;
 
 import org.drift.common.api.CommonResult;
-import org.drift.common.pojo.post.PostRequest;
 import org.drift.post.service.CollectionService;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,14 +18,16 @@ public class CollectionController {
     }
 
     @PostMapping("/collect")
-    public CommonResult<?> collect(@RequestBody PostRequest request) {
-        collectionService.collect(request);
+    public CommonResult<?> collect(@RequestParam("post_id") Long postId,
+                                   @RequestParam("author_id") Long authorId) {
+        collectionService.collect(postId, authorId);
         return CommonResult.success();
     }
 
     @PostMapping("/cancel")
-    public CommonResult<?> cancel(@RequestBody PostRequest request) {
-        collectionService.cancel(request);
+    public CommonResult<?> cancel(@RequestParam("post_id") Long postId,
+                                  @RequestParam("author_id") Long authorId) {
+        collectionService.cancel(postId, authorId);
         return CommonResult.success();
     }
 

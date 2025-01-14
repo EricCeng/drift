@@ -44,19 +44,23 @@ public class CommonResult<T> {
         return new CommonResult<>(ResultCode.SUCCESS.getCode(), message, data);
     }
 
-    public static <T> CommonResult<T> failed(IErrorCode errorCode) {
+    public static <T> CommonResult<T> error(IErrorCode errorCode) {
         return new CommonResult<>(errorCode.getCode(), errorCode.getMessage(), null);
     }
 
-    public static <T> CommonResult<T> failed(IErrorCode errorCode, String message) {
+    public static <T> CommonResult<T> error(IErrorCode errorCode, String message) {
         return new CommonResult<>(errorCode.getCode(), message, null);
     }
 
-    public static <T> CommonResult<T> failed(String message) {
-        return new CommonResult<>(ResultCode.FAILED.getCode(), message, null);
+    public static <T> CommonResult<T> error(int errorCode, String message) {
+        return new CommonResult<>(errorCode, message, null);
     }
 
-    public static <T> CommonResult<T> failed() {
-        return failed(ResultCode.FAILED);
+    public static <T> CommonResult<T> error(String message) {
+        return new CommonResult<>(ResultCode.ERROR.getCode(), message, null);
+    }
+
+    public static <T> CommonResult<T> error() {
+        return error(ResultCode.ERROR);
     }
 }

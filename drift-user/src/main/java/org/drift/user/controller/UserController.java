@@ -1,7 +1,6 @@
 package org.drift.user.controller;
 
 import org.drift.common.api.CommonResult;
-import org.drift.common.pojo.user.RegisterationRequest;
 import org.drift.common.pojo.user.UserInfoResponse;
 import org.drift.common.pojo.user.UserRequest;
 import org.drift.user.service.UserService;
@@ -22,14 +21,8 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/register")
-    private CommonResult<?> register(@RequestBody RegisterationRequest request) {
-        userService.register(request);
-        return CommonResult.success();
-    }
-
     @GetMapping("/info")
-    private CommonResult<UserInfoResponse> getUserInfo(@RequestParam("user_id") Long userId) {
+    private CommonResult<UserInfoResponse> getUserInfo(@RequestParam(defaultValue = "user_id", required = false) Long userId) {
         return CommonResult.success(userService.getUserInfo(userId));
     }
 

@@ -1,7 +1,9 @@
-package org.drift.user.config;
+package org.drift.common.config;
 
 import feign.Logger;
+import feign.RequestInterceptor;
 import feign.Retryer;
+import org.drift.common.context.UserContextHolder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,5 +29,19 @@ public class FeignConfig {
     @Bean
     public Logger.Level feignLoggerLevel() {
         return Logger.Level.FULL;
+    }
+
+    /**
+     * 拦截器在 Header 中设置 USER-ID
+     */
+    @Bean
+    public RequestInterceptor userInfoRequestInterceptor() {
+        return template -> {
+            Long userId = UserContextHolder.getUserContext();
+            if (userId == null) {
+                return;
+            }
+            template.header("USER-ID", String.valueOf(userId));
+        };
     }
 }

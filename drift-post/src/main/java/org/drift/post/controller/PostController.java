@@ -24,16 +24,14 @@ public class PostController {
     }
 
     @GetMapping("/all_posts")
-    public CommonResult<List<PostResponse>> getAllPosts(@RequestParam("user_id") Long userId,
-                                                        @RequestParam(value = "following", required = false) Boolean following,
+    public CommonResult<List<PostResponse>> getAllPosts(@RequestParam(value = "following", required = false) Boolean following,
                                                         @RequestParam("page") Integer page) {
-        return CommonResult.success(postService.getAllPosts(userId, following, page));
+        return CommonResult.success(postService.getAllPosts(following, page));
     }
 
     @GetMapping("/personal_posts")
-    public CommonResult<List<PostResponse>> getPersonalPosts(@RequestParam("user_id") Long userId,
-                                                             @RequestParam("author_id") Long authorId,
+    public CommonResult<List<PostResponse>> getPersonalPosts(@RequestParam("author_id") Long authorId,
                                                              @RequestParam("page") Integer page) {
-        return CommonResult.success(postService.getPersonalPosts(userId, authorId, page));
+        return CommonResult.success(postService.getPersonalPosts(authorId, page));
     }
 }

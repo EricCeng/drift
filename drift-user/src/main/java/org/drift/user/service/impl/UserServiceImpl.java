@@ -2,17 +2,20 @@ package org.drift.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.drift.common.api.CommonResult;
+import org.drift.common.context.UserContextHolder;
 import org.drift.common.exception.ApiException;
 import org.drift.common.feign.FollowServiceClient;
 import org.drift.common.feign.PostServiceClient;
 import org.drift.common.pojo.follow.FollowResponse;
-import org.drift.common.pojo.user.RegisterationRequest;
+import org.drift.common.pojo.user.AuthRequest;
 import org.drift.common.pojo.user.UserInfoResponse;
 import org.drift.common.pojo.user.UserRequest;
+import org.drift.common.util.JwtUtil;
 import org.drift.user.bean.User;
 import org.drift.user.mapper.UserMapper;
 import org.drift.user.service.UserService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
@@ -40,7 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void register(RegisterationRequest request) {
+    public void register(AuthRequest request) {
         String username = request.getUsername();
         String password = request.getPassword();
         String rePassword = request.getRePassword();
@@ -54,7 +57,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public String login(AuthRequest request) {
+        User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
+                .select(User::getId)
+                .eq(User::getUsername, request.getUsername())
+                .eq(User::getPassword, request.getPassword()));
+        return JwtUtil.createToken(user.getId(), null);
+    }
+
+    @Override
     public UserInfoResponse getUserInfo(Long userId) {
+        if (ObjectUtils.isEmpty(userId)) {
+            userId = UserContextHolder.getUserContext();
+        }
         // 获取用户信息
         User user = userMapper.selectById(userId);
         String birthday = user.getBirthday();

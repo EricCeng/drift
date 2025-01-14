@@ -9,7 +9,7 @@ import java.util.List;
  * @date 2024/12/22 00:35
  */
 public interface PostService {
-    List<PostResponse> getAllPosts(Long userId, Boolean following, Integer page);
+    List<PostResponse> getAllPosts(Boolean following, Integer page);
 
-    List<PostResponse> getPersonalPosts(Long userId, Long authorId, Integer page);
+    List<PostResponse> getPersonalPosts(Long authorId, Integer page);
 }

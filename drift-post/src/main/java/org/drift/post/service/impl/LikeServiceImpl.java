@@ -1,8 +1,8 @@
 package org.drift.post.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import org.drift.common.context.UserContextHolder;
 import org.drift.common.pojo.like.PostLikedCountDto;
-import org.drift.common.pojo.post.PostRequest;
 import org.drift.post.bean.Like;
 import org.drift.post.mapper.LikeMapper;
 import org.drift.post.service.LikeService;
@@ -27,19 +27,19 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public void like(PostRequest request) {
+    public void like(Long postId, Long authorId) {
         likeMapper.insert(new Like()
-                .setPostId(request.getPostId())
-                .setAuthorId(request.getAuthorId())
-                .setUserId(request.getUserId()));
+                .setPostId(postId)
+                .setAuthorId(authorId)
+                .setUserId(UserContextHolder.getUserContext()));
     }
 
     @Override
-    public void cancel(PostRequest request) {
+    public void cancel(Long postId, Long authorId) {
         Like like = likeMapper.selectOne(new LambdaQueryWrapper<Like>()
-                .eq(Like::getPostId, request.getPostId())
-                .eq(Like::getAuthorId, request.getAuthorId())
-                .eq(Like::getUserId, request.getUserId()));
+                .eq(Like::getPostId, postId)
+                .eq(Like::getAuthorId, authorId)
+                .eq(Like::getUserId, UserContextHolder.getUserContext()));
         likeMapper.deleteById(like);
     }
 
@@ -54,16 +54,16 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public Boolean isLiked(Long userId, Long postId) {
+    public Boolean isLiked(Long postId) {
         return likeMapper.exists(new LambdaQueryWrapper<Like>()
-                .eq(Like::getUserId, userId)
+                .eq(Like::getUserId, UserContextHolder.getUserContext())
                 .eq(Like::getPostId, postId));
     }
 
     @Override
-    public List<Long> isLikedForPosts(Long userId, Set<Long> postIds) {
+    public List<Long> isLikedForPosts(Set<Long> postIds) {
         List<Like> likes = likeMapper.selectList(new LambdaQueryWrapper<Like>()
-                .eq(Like::getUserId, userId)
+                .eq(Like::getUserId, UserContextHolder.getUserContext())
                 .eq(Like::getPostId, postIds));
         if (ObjectUtils.isEmpty(likes)) {
             return new ArrayList<>();

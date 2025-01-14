@@ -1,6 +1,7 @@
 package org.drift.post.service.impl;
 
 import org.drift.common.api.CommonResult;
+import org.drift.common.context.UserContextHolder;
 import org.drift.common.feign.FollowServiceClient;
 import org.drift.common.feign.UserServiceClient;
 import org.drift.common.pojo.like.PostLikedCountDto;
@@ -39,11 +40,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostResponse> getAllPosts(Long userId, Boolean following, Integer page) {
+    public List<PostResponse> getAllPosts(Boolean following, Integer page) {
         List<Long> followingUserIds = new ArrayList<>();
         if (following != null && following) {
-            // 获取当前用户关注的用户ID
-            followingUserIds = followServiceClient.getFollowingUsers(userId).getData();
+            // 只有登录用户才有获取关注列表动态的场景
+            followingUserIds = followServiceClient.getFollowingUsers(UserContextHolder.getUserContext()).getData();
             if (ObjectUtils.isEmpty(followingUserIds)) {
                 return new ArrayList<>();
             }
@@ -53,16 +54,17 @@ public class PostServiceImpl implements PostService {
         if (ObjectUtils.isEmpty(posts)) {
             return new ArrayList<>();
         }
-        // 根据动态ID获取对应的点赞数及当前用户的点赞状态
+        // 根据动态ID获取对应的点赞数及登录用户的点赞状态
         Set<Long> postIds = posts.stream().map(Post::getId).collect(Collectors.toSet());
         List<PostLikedCountDto> postLikedCountList = likeService.getPostLikedCountList(postIds);
         Map<Long, Long> postLikedCountMap = postLikedCountList.stream()
                 .collect(Collectors.toMap(PostLikedCountDto::getPostId, PostLikedCountDto::getLikedCount));
-        List<Long> likedPostIds = likeService.isLikedForPosts(userId, postIds);
+        // 获取登录用户的点赞状态
+        List<Long> likedPostIds = likeService.isLikedForPosts(postIds);
         // 根据动态作者ID获取对应的作者信息
         Set<Long> authorIds = posts.stream().map(Post::getUserId).collect(Collectors.toSet());
-        CommonResult<List<UserInfoResponse>> authorBasicInfoList = userServiceClient.getUserBasicInfoList(
-                new UserRequest().setUserIds(authorIds));
+        CommonResult<List<UserInfoResponse>> authorBasicInfoList =
+                userServiceClient.getUserBasicInfoList(new UserRequest().setUserIds(authorIds));
         Map<Long, UserInfoResponse> authorBasicInfoMap = authorBasicInfoList.getData().stream()
                 .collect(Collectors.toMap(UserInfoResponse::getUserId, user -> user));
         return posts.stream().map(post -> {
@@ -80,18 +82,21 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostResponse> getPersonalPosts(Long userId, Long authorId, Integer page) {
+    public List<PostResponse> getPersonalPosts(Long authorId, Integer page) {
+        if (authorId == null) {
+            authorId = UserContextHolder.getUserContext();
+        }
         // 获取动态列表
         List<Post> posts = postMapper.selectPostList(authorId, null, page);
         if (ObjectUtils.isEmpty(posts)) {
             return new ArrayList<>();
         }
-        // 根据动态ID获取对应的点赞数及当前用户的点赞状态
+        // 根据动态ID获取对应的点赞数及登录用户的点赞状态
         Set<Long> postIds = posts.stream().map(Post::getId).collect(Collectors.toSet());
         List<PostLikedCountDto> postLikedCountList = likeService.getPostLikedCountList(postIds);
         Map<Long, Long> postLikedCountMap = postLikedCountList.stream()
                 .collect(Collectors.toMap(PostLikedCountDto::getPostId, PostLikedCountDto::getLikedCount));
-        List<Long> likedPostIds = likeService.isLikedForPosts(userId, postIds);
+        List<Long> likedPostIds = likeService.isLikedForPosts(postIds);
         return posts.stream().map(post -> {
             Long postId = post.getId();
             return new PostResponse()
