@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.6</version>
+        <version>3.3.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.drift</groupId>
@@ -30,7 +30,7 @@
         <spring-cloud-alibaba.version>2023.0.3.2</spring-cloud-alibaba.version>
         <mysql.version>8.4.0</mysql.version>
         <druid.version>1.2.24</druid.version>
-        <mybaits-plus.version>3.5.9</mybaits-plus.version>
+        <mybaits-plus.version>3.5.10.1</mybaits-plus.version>
         <jackson.version>2.18.2</jackson.version>
         <hutool.version>5.8.34</hutool.version>
         <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
@@ -68,13 +68,13 @@
             <!-- Druid -->
             <dependency>
                 <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
+                <artifactId>druid-spring-boot-3-starter</artifactId>
                 <version>${druid.version}</version>
             </dependency>
             <!-- Mybatis-Plus -->
             <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
                 <version>${mybaits-plus.version}</version>
             </dependency>
             <!-- Jackson -->

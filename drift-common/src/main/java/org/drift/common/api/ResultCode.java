@@ -6,7 +6,8 @@ package org.drift.common.api;
  */
 public enum ResultCode implements IErrorCode {
     SUCCESS(0, "成功"),
-    UNAUTHORIZED(401, "账号未登录"),
+    UNAUTHORIZED(401, "账号未登录！"),
+    INVALID_TOKEN(402, "访问令牌已失效，请重新登录！"),
     ERROR(500, "内部服务器错误"),
     ;
 

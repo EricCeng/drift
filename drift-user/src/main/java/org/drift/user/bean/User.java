@@ -21,6 +21,8 @@ public class User {
     private Long id;
     @TableField("username")
     private String username;
+    @TableField("phone_number")
+    private String phoneNumber;
     @TableField("password")
     private String password;
     @TableField("avatar_url")

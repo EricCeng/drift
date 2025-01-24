@@ -9,7 +9,8 @@ import lombok.Data;
  */
 @Data
 public class AuthRequest {
-    private String username;
+    @JsonProperty("phone_number")
+    private String phoneNumber;
     private String password;
     @JsonProperty("re_password")
     private String rePassword;

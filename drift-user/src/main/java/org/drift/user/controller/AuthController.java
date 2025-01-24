@@ -3,10 +3,7 @@ package org.drift.user.controller;
 import org.drift.common.api.CommonResult;
 import org.drift.common.pojo.user.AuthRequest;
 import org.drift.user.service.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author jiakui_zeng
@@ -30,5 +27,10 @@ public class AuthController {
     @PostMapping("/login")
     private CommonResult<String> login(@RequestBody AuthRequest request) {
         return CommonResult.success(userService.login(request));
+    }
+
+    @GetMapping("/check")
+    private CommonResult<?> check() {
+        return CommonResult.success();
     }
 }

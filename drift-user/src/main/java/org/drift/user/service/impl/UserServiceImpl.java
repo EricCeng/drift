@@ -1,6 +1,7 @@
 package org.drift.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.drift.common.api.CommonResult;
 import org.drift.common.context.UserContextHolder;
 import org.drift.common.exception.ApiException;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
  * @date 2024/12/21 16:12
  */
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PostServiceClient postServiceClient;
@@ -44,25 +46,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void register(AuthRequest request) {
-        String username = request.getUsername();
+        String phoneNumber = request.getPhoneNumber();
         String password = request.getPassword();
         String rePassword = request.getRePassword();
-        if (!StringUtils.hasLength(username) || !StringUtils.hasLength(password) || !StringUtils.hasLength(rePassword)) {
-            throw new ApiException("用户名或密码不能为空");
+        User user = userMapper.selectOne(new LambdaQueryWrapper<User>().select(User::getId).eq(User::getPhoneNumber, phoneNumber));
+        if (!ObjectUtils.isEmpty(user)) {
+            throw new ApiException("该手机号已被注册");
         }
-        if (!password.equals(rePassword)) {
-            throw new ApiException("两次密码不一致");
-        }
-        userMapper.insert(new User().setUsername(username).setPassword(password));
+        userMapper.insert(new User().setPhoneNumber(phoneNumber).setPassword(password));
     }
 
     @Override
     public String login(AuthRequest request) {
         User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
-                .select(User::getId)
-                .eq(User::getUsername, request.getUsername())
-                .eq(User::getPassword, request.getPassword()));
-        return JwtUtil.createToken(user.getId(), null);
+                .select(User::getId, User::getPassword)
+                .eq(User::getPhoneNumber, request.getPhoneNumber()));
+        if (ObjectUtils.isEmpty(user)) {
+            throw new ApiException("该手机号尚未注册，请先注册");
+        }
+        if (!user.getPassword().equals(request.getPassword())) {
+            throw new ApiException("密码错误，请重试");
+        }
+        return JwtUtil.createToken(user.getId());
     }
 
     @Override

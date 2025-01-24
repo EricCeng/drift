@@ -2,6 +2,8 @@ server:
   port: 16780
 
 spring:
+  main:
+    web-application-type: reactive
   application:
     name: drift-gateway-service
   cloud:

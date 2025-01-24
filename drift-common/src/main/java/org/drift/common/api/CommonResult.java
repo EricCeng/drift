@@ -17,7 +17,7 @@ public class CommonResult<T> {
     /**
      * 返回信息
      */
-    @JsonProperty("error_info")
+    @JsonProperty("error_msg")
     private String message;
 
     @JsonProperty("data")
