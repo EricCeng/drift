@@ -30,8 +30,8 @@ public class PostController {
     }
 
     @GetMapping("/personal_posts")
-    public CommonResult<List<PostResponse>> getPersonalPosts(@RequestParam("author_id") Long authorId,
-                                                             @RequestParam("page") Integer page) {
+    public CommonResult<List<PostResponse>> getPersonalPosts(@RequestParam(value = "author_id", required = false) Long authorId,
+                                                             @RequestParam(value = "page") Integer page) {
         return CommonResult.success(postService.getPersonalPosts(authorId, page));
     }
 }

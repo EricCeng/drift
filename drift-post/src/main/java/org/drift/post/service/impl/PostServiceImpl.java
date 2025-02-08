@@ -74,6 +74,7 @@ public class PostServiceImpl implements PostService {
                     .setPostId(postId)
                     .setTitle(post.getTitle())
                     .setFirstImageUrl("")
+                    .setAuthorId(post.getUserId())
                     .setAuthor(authorBasicInfo.getUsername())
                     .setAuthorAvatarUrl(authorBasicInfo.getAvatarUrl())
                     .setLiked(likedPostIds.contains(postId))
@@ -97,12 +98,16 @@ public class PostServiceImpl implements PostService {
         Map<Long, Long> postLikedCountMap = postLikedCountList.stream()
                 .collect(Collectors.toMap(PostLikedCountDto::getPostId, PostLikedCountDto::getLikedCount));
         List<Long> likedPostIds = likeService.isLikedForPosts(postIds);
+        UserInfoResponse userInfo = userServiceClient.getUserBasicInfo(authorId).getData();
         return posts.stream().map(post -> {
             Long postId = post.getId();
             return new PostResponse()
                     .setPostId(postId)
                     .setTitle(post.getTitle())
                     .setFirstImageUrl("")
+                    .setAuthorId(post.getUserId())
+                    .setAuthor(userInfo.getUsername())
+                    .setAuthorAvatarUrl(userInfo.getAvatarUrl())
                     .setLiked(likedPostIds.contains(postId))
                     .setLikedCount(Optional.ofNullable(postLikedCountMap.get(postId)).orElse(0L));
         }).collect(Collectors.toList());

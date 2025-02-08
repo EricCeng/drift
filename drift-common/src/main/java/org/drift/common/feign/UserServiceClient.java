@@ -5,7 +5,9 @@ import org.drift.common.pojo.user.UserInfoResponse;
 import org.drift.common.pojo.user.UserRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -15,6 +17,9 @@ import java.util.List;
  */
 @FeignClient(name = "drift-user-service")
 public interface UserServiceClient {
-    @GetMapping("/drift/user/basic_info_list")
+    @PostMapping("/drift/user/basic_info_list")
     CommonResult<List<UserInfoResponse>> getUserBasicInfoList(@RequestBody UserRequest request);
+
+    @GetMapping("/drift/user/basic_info")
+    CommonResult<UserInfoResponse> getUserBasicInfo(@RequestParam(value = "user_id", required = false) Long authorId);
 }

@@ -17,5 +17,7 @@ public interface UserService {
 
     UserInfoResponse getUserInfo(Long userId);
 
+    UserInfoResponse getUserBasicInfo(Long userId);
+
     List<UserInfoResponse> getBasicUserInfoList(UserRequest request);
 }

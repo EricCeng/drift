@@ -16,6 +16,8 @@ public class PostResponse {
     private String title;
     @JsonProperty("first_image_url")
     private String firstImageUrl;
+    @JsonProperty("author_id")
+    private Long authorId;
     private String author;
     @JsonProperty("author_avatar_url")
     private String authorAvatarUrl;

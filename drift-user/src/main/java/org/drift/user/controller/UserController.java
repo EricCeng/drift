@@ -22,11 +22,16 @@ public class UserController {
     }
 
     @GetMapping("/info")
-    private CommonResult<UserInfoResponse> getUserInfo(@RequestParam(defaultValue = "user_id", required = false) Long userId) {
+    private CommonResult<UserInfoResponse> getUserInfo(@RequestParam(value = "user_id", required = false) Long userId) {
         return CommonResult.success(userService.getUserInfo(userId));
     }
 
-    @GetMapping("/basic_info_list")
+    @GetMapping("/basic_info")
+    private CommonResult<UserInfoResponse> getUserBasicInfo(@RequestParam(value = "user_id", required = false) Long userId) {
+        return CommonResult.success(userService.getUserBasicInfo(userId));
+    }
+
+    @PostMapping("/basic_info_list")
     private CommonResult<List<UserInfoResponse>> getUserBasicInfo(@RequestBody UserRequest request) {
         return CommonResult.success(userService.getBasicUserInfoList(request));
     }

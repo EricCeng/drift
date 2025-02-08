@@ -48,7 +48,6 @@ public class UserServiceImpl implements UserService {
     public void register(AuthRequest request) {
         String phoneNumber = request.getPhoneNumber();
         String password = request.getPassword();
-        String rePassword = request.getRePassword();
         User user = userMapper.selectOne(new LambdaQueryWrapper<User>().select(User::getId).eq(User::getPhoneNumber, phoneNumber));
         if (!ObjectUtils.isEmpty(user)) {
             throw new ApiException("该手机号已被注册");
@@ -87,6 +86,7 @@ public class UserServiceImpl implements UserService {
         CommonResult<Long> likedCount = postServiceClient.getUserLikedCount(userId);
         CommonResult<Long> collectedCount = postServiceClient.getUserCollectedCount(userId);
         return new UserInfoResponse()
+                .setUserId(userId)
                 .setUsername(user.getUsername())
                 .setAvatarUrl(user.getAvatarUrl())
                 .setBio(user.getBio())
@@ -99,6 +99,20 @@ public class UserServiceImpl implements UserService {
                 .setFollowerCount(followInfo.getData().getFollowerCount())
                 .setLikedCount(likedCount.getData())
                 .setCollectedCount(collectedCount.getData());
+    }
+
+    @Override
+    public UserInfoResponse getUserBasicInfo(Long userId) {
+        if (ObjectUtils.isEmpty(userId)) {
+            userId = UserContextHolder.getUserContext();
+        }
+        User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
+                .select(User::getId, User::getUsername, User::getAvatarUrl)
+                .eq(User::getId, userId));
+        return new UserInfoResponse()
+                .setUserId(userId)
+                .setUsername(user.getUsername())
+                .setAvatarUrl(user.getAvatarUrl());
     }
 
     @Override

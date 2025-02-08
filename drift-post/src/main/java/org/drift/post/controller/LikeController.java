@@ -2,10 +2,7 @@ package org.drift.post.controller;
 
 import org.drift.common.api.CommonResult;
 import org.drift.post.service.LikeService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Jiakui_Zeng
@@ -34,8 +31,8 @@ public class LikeController {
         return CommonResult.success();
     }
 
-    @PostMapping("/liked_count")
-    public CommonResult<Long> getUserLikedCount(@RequestParam("authorId") Long authorId) {
+    @GetMapping("/liked_count")
+    public CommonResult<Long> getUserLikedCount(@RequestParam("author_id") Long authorId) {
         return CommonResult.success(likeService.getUserLikedCount(authorId));
     }
 }

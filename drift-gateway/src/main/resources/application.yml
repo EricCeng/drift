@@ -24,7 +24,13 @@ spring:
           uri: lb://drift-post-service
           predicates:
             - Path=/drift/post/**
+        - id: like_route
+          uri: lb://drift-post-service
+          predicates:
             - Path=/drift/like/**
+        - id: collection_route
+          uri: lb://drift-post-service
+          predicates:
             - Path=/drift/collection/**
         - id: comment_route
           uri: lb://drift-comment-service

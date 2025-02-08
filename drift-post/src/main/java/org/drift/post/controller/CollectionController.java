@@ -32,7 +32,7 @@ public class CollectionController {
     }
 
     @GetMapping("/collected_count")
-    public CommonResult<Long> getUserCollectedCount(@RequestParam("authorId") Long authorId) {
+    public CommonResult<Long> getUserCollectedCount(@RequestParam("author_Id") Long authorId) {
         return CommonResult.success(collectionService.getUserCollectedCount(authorId));
     }
 }
