@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "drift-post-service")
 public interface PostServiceClient {
     @GetMapping("/drift/collection/collected_count")
-    CommonResult<Long> getUserCollectedCount(@RequestParam("author_Id") Long authorId);
+    CommonResult<Long> getUserCollectedCount(@RequestParam("user_id") Long userId);
 
     @GetMapping("/drift/like/liked_count")
-    CommonResult<Long> getUserLikedCount(@RequestParam("author_id") Long authorId);
+    CommonResult<Long> getUserLikedCount(@RequestParam("user_id") Long userId);
 }

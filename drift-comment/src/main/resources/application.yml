@@ -8,3 +8,32 @@ spring:
     nacos:
       discovery:
         server-addr: localhost:8848
+    openfeign:
+      httpclient:
+        hc5:
+          enabled: true # 使用 Apache HttpClient 5 替换 JDK 自带的 HttpURLConnection（无连接池），提升性能
+      client:
+        config:
+          default: # 全局超时配置
+            connect-timeout: 20000 # 单位ms
+            read-timeout: 20000 # 单位ms
+      compression:
+        request:
+          enabled: true # 开启请求 GZIP 压缩
+          min-request-size: 2048 # 最小触发压缩的大小，单位字节
+          mime-types: text/xml,application/xml,application/json # 触发压缩的数据类型
+        response:
+          enabled: true # 开启相应 GZIP 压缩
+  datasource:
+    druid:
+      url: jdbc:mysql://127.0.0.1:3306/drift?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: root
+      password: P@ssw0rd
+      initial-size: 20
+      min-idle: 20
+      max-active: 140
+      max-wait: 6000
+      socket-timeout: 20000
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*.xml

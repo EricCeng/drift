@@ -8,7 +8,4 @@ import org.drift.follow.bean.Follow;
  * @date 2024/12/22 00:08
  */
 public interface FollowMapper extends BaseMapper<Follow> {
-    long selectFollowingCount(Long userId);
-
-    long selectFollowerCount(Long userId);
 }

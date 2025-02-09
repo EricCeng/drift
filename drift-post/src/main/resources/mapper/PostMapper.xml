@@ -8,8 +8,8 @@
                image_url
         FROM tbl_posts
         <where>
-            <if test="authorId != null">
-                user_id = #{authorId}
+            <if test="userId != null">
+                user_id = #{userId}
             </if>
             <if test="followingUserIds != null and followingUserIds.size() > 0">
                 user_id IN
@@ -18,7 +18,15 @@
                 </foreach>
             </if>
         </where>
-        ORDER BY update_time DESC
-        LIMIT #{page}, 20
+        ORDER BY
+        <choose>
+            <when test="userId != null">
+                update_time DESC, id DESC
+            </when>
+            <otherwise>
+                random_order DESC
+            </otherwise>
+        </choose>
+        LIMIT #{page * 20}, 20
     </select>
 </mapper>

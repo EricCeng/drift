@@ -32,7 +32,7 @@ public class LikeController {
     }
 
     @GetMapping("/liked_count")
-    public CommonResult<Long> getUserLikedCount(@RequestParam("author_id") Long authorId) {
-        return CommonResult.success(likeService.getUserLikedCount(authorId));
+    public CommonResult<Long> getUserLikedCount(@RequestParam("user_id") Long userId) {
+        return CommonResult.success(likeService.getUserLikedCount(userId));
     }
 }

@@ -41,8 +41,8 @@ public class FollowServiceImpl implements FollowService {
     @Override
     public FollowResponse getFollowInfo(Long userId) {
         return new FollowResponse()
-                .setFollowingCount(followMapper.selectFollowingCount(userId))
-                .setFollowerCount(followMapper.selectFollowerCount(userId));
+                .setFollowingCount(followMapper.selectCount(new LambdaQueryWrapper<Follow>().eq(Follow::getFollowerId, userId)))
+                .setFollowerCount(followMapper.selectCount(new LambdaQueryWrapper<Follow>().eq(Follow::getFollowedId, userId)));
     }
 
     @Override
@@ -53,5 +53,12 @@ public class FollowServiceImpl implements FollowService {
             return new ArrayList<>();
         }
         return follows.stream().map(Follow::getFollowedId).collect(Collectors.toList());
+    }
+
+    @Override
+    public Boolean isFollowing(Long authorId) {
+        return followMapper.exists(new LambdaQueryWrapper<Follow>()
+                .eq(Follow::getFollowerId, UserContextHolder.getUserContext())
+                .eq(Follow::getFollowedId, authorId));
     }
 }

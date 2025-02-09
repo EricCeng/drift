@@ -41,4 +41,9 @@ public class FollowController {
     public CommonResult<List<Long>> getFollowingUsers(@RequestParam("user_id") Long userId) {
         return CommonResult.success(followService.getFollowingUsers(userId));
     }
+
+    @GetMapping("is_following")
+    public CommonResult<Boolean> isFollowing(@RequestParam("author_id") Long authorId) {
+        return CommonResult.success(followService.isFollowing(authorId));
+    }
 }

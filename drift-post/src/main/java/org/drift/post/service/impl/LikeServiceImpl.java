@@ -11,7 +11,6 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -44,12 +43,12 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public Long getUserLikedCount(Long authorId) {
-        return likeMapper.selectUserLikedCount(authorId);
+    public Long getUserLikedCount(Long userId) {
+        return likeMapper.selectCount(new LambdaQueryWrapper<Like>().eq(Like::getAuthorId, userId));
     }
 
     @Override
-    public List<PostLikedCountDto> getPostLikedCountList(Set<Long> postIds) {
+    public List<PostLikedCountDto> getPostLikedCountList(List<Long> postIds) {
         return likeMapper.selectPostLikedCount(postIds);
     }
 
@@ -61,7 +60,7 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public List<Long> isLikedForPosts(Set<Long> postIds) {
+    public List<Long> isLikedForPosts(List<Long> postIds) {
         List<Like> likes = likeMapper.selectList(new LambdaQueryWrapper<Like>()
                 .eq(Like::getUserId, UserContextHolder.getUserContext())
                 .eq(Like::getPostId, postIds));
@@ -69,5 +68,15 @@ public class LikeServiceImpl implements LikeService {
             return new ArrayList<>();
         }
         return likes.stream().map(Like::getPostId).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Long> getLikePostIds(Integer page) {
+        return likeMapper.selectLikePostIds(UserContextHolder.getUserContext(), page);
+    }
+
+    @Override
+    public Long getPostLikedCount(Long postId) {
+        return likeMapper.selectCount(new LambdaQueryWrapper<Like>().eq(Like::getPostId, postId));
     }
 }

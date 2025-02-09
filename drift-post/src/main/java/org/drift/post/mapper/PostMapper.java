@@ -10,5 +10,5 @@ import java.util.List;
  * @date 2024/12/22 00:38
  */
 public interface PostMapper extends BaseMapper<Post> {
-    List<Post> selectPostList(Long authorId, List<Long> followingUserIds, Integer page);
+    List<Post> selectPostList(Long userId, List<Long> followingUserIds, Integer page);
 }

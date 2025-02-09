@@ -27,6 +27,8 @@ public class Post {
     private String content;
     @TableField("image_url")
     private String imageUrl;
+    @TableField("random_order")
+    private String randomOrder;
     @TableField("create_time")
     private Instant createTime;
     @TableField("update_time")

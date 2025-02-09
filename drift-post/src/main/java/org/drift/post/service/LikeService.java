@@ -3,7 +3,6 @@ package org.drift.post.service;
 import org.drift.common.pojo.like.PostLikedCountDto;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Jiakui_Zeng
@@ -14,11 +13,15 @@ public interface LikeService {
 
     void cancel(Long postId, Long authorId);
 
-    Long getUserLikedCount(Long authorId);
+    Long getUserLikedCount(Long userId);
 
-    List<PostLikedCountDto> getPostLikedCountList(Set<Long> postIds);
+    List<PostLikedCountDto> getPostLikedCountList(List<Long> postIds);
 
     Boolean isLiked(Long postId);
 
-    List<Long> isLikedForPosts(Set<Long> postIds);
+    List<Long> isLikedForPosts(List<Long> postIds);
+
+    List<Long> getLikePostIds(Integer page);
+
+    Long getPostLikedCount(Long postId);
 }

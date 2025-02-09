@@ -7,6 +7,8 @@ import org.drift.post.mapper.CollectionMapper;
 import org.drift.post.service.CollectionService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author Jiakui_Zeng
  * @date 2024/12/22 00:38
@@ -37,7 +39,24 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
-    public Long getUserCollectedCount(Long authorId) {
-        return collectionMapper.selectUserCollectedCount(authorId);
+    public Long getUserCollectedCount(Long userId) {
+        return collectionMapper.selectCount(new LambdaQueryWrapper<Collection>().eq(Collection::getAuthorId, userId));
+    }
+
+    @Override
+    public List<Long> getUserCollectionPostIds(Long userId, Integer page) {
+        return collectionMapper.selectUserCollectionPostIds(userId, page);
+    }
+
+    @Override
+    public Boolean isCollected(Long postId) {
+        return collectionMapper.exists(new LambdaQueryWrapper<Collection>()
+                .eq(Collection::getUserId, UserContextHolder.getUserContext())
+                .eq(Collection::getPostId, postId));
+    }
+
+    @Override
+    public Long getPostCollectedCount(Long postId) {
+        return collectionMapper.selectCount(new LambdaQueryWrapper<Collection>().eq(Collection::getPostId, postId));
     }
 }
