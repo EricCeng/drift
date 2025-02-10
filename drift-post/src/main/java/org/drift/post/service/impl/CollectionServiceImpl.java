@@ -45,7 +45,7 @@ public class CollectionServiceImpl implements CollectionService {
 
     @Override
     public List<Long> getUserCollectionPostIds(Long userId, Integer page) {
-        return collectionMapper.selectUserCollectionPostIds(userId, page);
+        return collectionMapper.selectUserCollectionPostIds(userId, page * 20);
     }
 
     @Override

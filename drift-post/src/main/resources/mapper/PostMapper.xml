@@ -27,6 +27,6 @@
                 random_order DESC
             </otherwise>
         </choose>
-        LIMIT #{page * 20}, 20
+        LIMIT #{page}, 20
     </select>
 </mapper>

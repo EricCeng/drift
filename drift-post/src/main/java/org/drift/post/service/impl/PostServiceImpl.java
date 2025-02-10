@@ -61,7 +61,7 @@ public class PostServiceImpl implements PostService {
             }
         }
         // 获取动态列表
-        List<Post> posts = postMapper.selectPostList(null, followingUserIds, page);
+        List<Post> posts = postMapper.selectPostList(null, followingUserIds, page * 20);
         if (ObjectUtils.isEmpty(posts)) {
             return new ArrayList<>();
         }
@@ -82,7 +82,7 @@ public class PostServiceImpl implements PostService {
             authorId = UserContextHolder.getUserContext();
         }
         // 获取动态列表
-        List<Post> posts = postMapper.selectPostList(authorId, null, page);
+        List<Post> posts = postMapper.selectPostList(authorId, null, page * 20);
         if (ObjectUtils.isEmpty(posts)) {
             return new ArrayList<>();
         }

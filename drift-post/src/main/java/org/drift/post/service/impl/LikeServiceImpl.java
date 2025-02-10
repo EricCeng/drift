@@ -72,7 +72,7 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     public List<Long> getLikePostIds(Integer page) {
-        return likeMapper.selectLikePostIds(UserContextHolder.getUserContext(), page);
+        return likeMapper.selectLikePostIds(UserContextHolder.getUserContext(), page * 20);
     }
 
     @Override

@@ -15,6 +15,8 @@ public interface UserService {
 
     String login(AuthRequest request);
 
+    void check();
+
     UserInfoResponse getUserInfo(Long userId);
 
     UserInfoResponse getUserBasicInfo(Long userId);

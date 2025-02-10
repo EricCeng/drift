@@ -28,9 +28,10 @@ public class UserTest {
         List<String> occupations = generateRandomOccupations(random);
         List<User> list = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
+            String phoneNumber = generateRandomChinesePhoneNumber(random);
             list.add(new User()
-                    .setUsername("用户" + (1000 + random.nextInt(9000)))
-                    .setPhoneNumber(generateRandomChinesePhoneNumber(random))
+                    .setUsername("用户" + phoneNumber.substring(phoneNumber.length() - 4))
+                    .setPhoneNumber(phoneNumber)
                     .setPassword("123456")
                     .setBio("这是我的简历" +(10 + random.nextInt(90)))
                     .setBirthday(generateRandomBirthday(random))

@@ -19,6 +19,6 @@
         FROM tbl_likes
         WHERE user_id = #{userId}
         ORDER BY create_time DESC
-        LIMIT #{page * 20}, 20
+        LIMIT #{page}, 20
     </select>
 </mapper>

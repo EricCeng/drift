@@ -31,6 +31,7 @@ public class AuthController {
 
     @GetMapping("/check")
     private CommonResult<?> check() {
+        userService.check();
         return CommonResult.success();
     }
 }

@@ -3,6 +3,7 @@ package org.drift.user.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.drift.common.api.CommonResult;
+import org.drift.common.api.ResultCode;
 import org.drift.common.context.UserContextHolder;
 import org.drift.common.exception.ApiException;
 import org.drift.common.feign.FollowServiceClient;
@@ -67,6 +68,14 @@ public class UserServiceImpl implements UserService {
             throw new ApiException("密码错误，请重试");
         }
         return JwtUtil.createToken(user.getId());
+    }
+
+    @Override
+    public void check() {
+        boolean exists = userMapper.exists(new LambdaQueryWrapper<User>().eq(User::getId, UserContextHolder.getUserContext()));
+        if (!exists) {
+            throw new ApiException(ResultCode.UNAUTHORIZED);
+        }
     }
 
     @Override
