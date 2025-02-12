@@ -16,6 +16,8 @@ public class PostResponse {
     private String title;
     @JsonProperty("first_image_url")
     private String firstImageUrl;
+    @JsonProperty("release_time")
+    private String releaseTime;
     @JsonProperty("author_id")
     private Long authorId;
     private String author;

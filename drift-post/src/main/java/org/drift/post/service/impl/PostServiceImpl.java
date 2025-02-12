@@ -219,6 +219,7 @@ public class PostServiceImpl implements PostService {
                     .setPostId(postId)
                     .setTitle(post.getTitle())
                     .setFirstImageUrl("")
+                    .setReleaseTime(DateUtil.format(post.getCreateTime()))
                     .setAuthorId(post.getUserId())
                     .setAuthor(authorBasicInfo.getUsername())
                     .setAuthorAvatarUrl(authorBasicInfo.getAvatarUrl())

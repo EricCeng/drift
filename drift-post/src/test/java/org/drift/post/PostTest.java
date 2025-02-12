@@ -6,6 +6,9 @@ import org.drift.post.mapper.PostMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -121,15 +124,20 @@ public class PostTest {
                 "1888521120925057025";
         String[] userIdArray = s.split(",");
         Random random = new Random();
+        Instant start = LocalDate.of(2024, 12, 15).atStartOfDay(ZoneId.systemDefault()).toInstant();
+        Instant end = Instant.now();
         for (String userId : userIdArray) {
             int randomNumber = random.nextInt(100);
             List<Post> list = new ArrayList<>();
             for (int i = 0; i < randomNumber; i++) {
+                Instant randomCreateTime = start.plusSeconds(random.nextLong(end.getEpochSecond() - start.getEpochSecond()));
                 list.add(new Post()
                         .setUserId(Long.valueOf(userId))
                         .setTitle("这是标题" + (1000 + random.nextInt(9000)))
                         .setContent("这是动态内容" + (10000 + random.nextInt(90000)))
-                        .setRandomOrder(UUID.randomUUID().toString()));
+                        .setRandomOrder(UUID.randomUUID().toString())
+                        .setCreateTime(randomCreateTime)
+                        .setUpdateTime(randomCreateTime));
             }
             BatchMapperUtils.insertBatch(list, PostMapper.class);
         }

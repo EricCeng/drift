@@ -5,7 +5,8 @@
         SELECT id,
                user_id,
                title,
-               image_url
+               image_url,
+               create_time
         FROM tbl_posts
         <where>
             <if test="userId != null">
