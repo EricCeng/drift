@@ -3,6 +3,7 @@ package org.drift.common.pojo.post;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.drift.common.pojo.user.AuthorDto;
 
 /**
  * @author Jiakui_Zeng
@@ -18,12 +19,8 @@ public class PostResponse {
     private String firstImageUrl;
     @JsonProperty("release_time")
     private String releaseTime;
-    @JsonProperty("author_id")
-    private Long authorId;
-    private String author;
-    @JsonProperty("author_avatar_url")
-    private String authorAvatarUrl;
-    private Boolean liked;
+    @JsonProperty("author_info")
+    private AuthorDto authorInfo;
     @JsonProperty("liked_count")
     private Long likedCount;
 }

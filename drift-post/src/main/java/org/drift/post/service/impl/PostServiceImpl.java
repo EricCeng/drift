@@ -9,6 +9,7 @@ import org.drift.common.feign.UserServiceClient;
 import org.drift.common.pojo.like.PostLikedCountDto;
 import org.drift.common.pojo.post.PostDetailResponse;
 import org.drift.common.pojo.post.PostResponse;
+import org.drift.common.pojo.user.AuthorDto;
 import org.drift.common.pojo.user.UserInfoResponse;
 import org.drift.common.pojo.user.UserRequest;
 import org.drift.common.util.DateUtil;
@@ -100,10 +101,11 @@ public class PostServiceImpl implements PostService {
                     .setPostId(postId)
                     .setTitle(post.getTitle())
                     .setFirstImageUrl("")
-                    .setAuthorId(post.getUserId())
-                    .setAuthor(userInfo.getUsername())
-                    .setAuthorAvatarUrl(userInfo.getAvatarUrl())
-                    .setLiked(likedPostIds.contains(postId))
+                    .setAuthorInfo(new AuthorDto()
+                            .setAuthorId(post.getUserId())
+                            .setAuthor(userInfo.getUsername())
+                            .setAuthorAvatarUrl(userInfo.getAvatarUrl())
+                            .setLiked(likedPostIds.contains(postId)))
                     .setLikedCount(Optional.ofNullable(postLikedCountMap.get(postId)).orElse(0L));
         }).collect(Collectors.toList());
     }
@@ -130,10 +132,11 @@ public class PostServiceImpl implements PostService {
                     .setPostId(postId)
                     .setTitle(post.getTitle())
                     .setFirstImageUrl("")
-                    .setAuthorId(post.getUserId())
-                    .setAuthor(authorBasicInfo.getUsername())
-                    .setAuthorAvatarUrl(authorBasicInfo.getAvatarUrl())
-                    .setLiked(true)
+                    .setAuthorInfo(new AuthorDto()
+                            .setAuthorId(post.getUserId())
+                            .setAuthor(authorBasicInfo.getUsername())
+                            .setAuthorAvatarUrl(authorBasicInfo.getAvatarUrl())
+                            .setLiked(true))
                     .setLikedCount(Optional.ofNullable(postLikedCountMap.get(postId)).orElse(0L));
         }).collect(Collectors.toList());
     }
@@ -178,17 +181,18 @@ public class PostServiceImpl implements PostService {
         // 获取动态评论数
         Long commentCount = commentServiceClient.getPostCommentCount(postId).getData();
         return new PostDetailResponse()
-                .setAuthorId(authorId)
-                .setAuthor(authorBasicInfo.getUsername())
-                .setAuthorAvatarUrl(authorBasicInfo.getAvatarUrl())
+                .setAuthorInfo(new AuthorDto()
+                        .setAuthorId(authorId)
+                        .setAuthor(authorBasicInfo.getUsername())
+                        .setAuthorAvatarUrl(authorBasicInfo.getAvatarUrl())
+                        .setLiked(liked)
+                        .setCollected(collected))
                 .setPostId(postId)
                 .setTitle(post.getTitle())
                 .setContent(post.getContent())
                 .setImageUrlList(new ArrayList<>())
                 .setReleaseTime(DateUtil.format(post.getUpdateTime()))
                 .setEdited(post.getCreateTime().equals(post.getUpdateTime()))
-                .setLiked(liked)
-                .setCollected(collected)
                 .setLikedCount(likedCount)
                 .setCollectedCount(collectedCount)
                 .setCommentCount(commentCount);
@@ -220,10 +224,11 @@ public class PostServiceImpl implements PostService {
                     .setTitle(post.getTitle())
                     .setFirstImageUrl("")
                     .setReleaseTime(DateUtil.format(post.getCreateTime()))
-                    .setAuthorId(post.getUserId())
-                    .setAuthor(authorBasicInfo.getUsername())
-                    .setAuthorAvatarUrl(authorBasicInfo.getAvatarUrl())
-                    .setLiked(likedPostIds.contains(postId))
+                    .setAuthorInfo(new AuthorDto()
+                            .setAuthorId(authorBasicInfo.getUserId())
+                            .setAuthor(authorBasicInfo.getUsername())
+                            .setAuthorAvatarUrl(authorBasicInfo.getAvatarUrl())
+                            .setLiked(likedPostIds.contains(postId)))
                     .setLikedCount(Optional.ofNullable(postLikedCountMap.get(postId)).orElse(0L));
         }).collect(Collectors.toList());
     }
