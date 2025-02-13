@@ -1,11 +1,15 @@
 package org.drift.common.pojo.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * @author jiakui_zeng
  * @date 2025/2/12 18:03
  */
+@Data
+@Accessors(chain = true)
 public class AuthorDto {
     @JsonProperty("author_id")
     private Long authorId;

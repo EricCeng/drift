@@ -1,5 +1,6 @@
 package org.drift.comment.service;
 
+import org.drift.common.pojo.comment.CommentRequest;
 import org.drift.common.pojo.comment.CommentResponse;
 
 import java.util.List;
@@ -9,7 +10,9 @@ import java.util.List;
  * @date 2025/2/9 15:02
  */
 public interface CommentService {
+    void publish(CommentRequest request);
+
     Long getPostCommentCount(Long postId);
 
-    List<CommentResponse> getPostCommentList(Long postId);
+    List<CommentResponse> getPostCommentList(Long postId, Integer page);
 }

@@ -3,6 +3,8 @@ package org.drift.common.pojo.comment;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.time.Instant;
+
 /**
  * @author jiakui_zeng
  * @date 2025/2/11 17:32
@@ -13,10 +15,7 @@ public class CommentDto {
     private Long commentId;
     private Long userId;
     private String content;
-    private String createTime;
+    private Instant createTime;
+    private Long parentCommentId;
     private Long childCommentCount;
-    private Long childCommentId;
-    private Long childCommentUserId;
-    private String childCommentContent;
-    private Long childCommentCreateTime;
 }

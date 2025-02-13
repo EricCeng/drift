@@ -1,58 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="org.drift.comment.mapper.CommentMapper">
-    <select id="selectCommentList" resultType="org.drift.common.pojo.comment.CommentDto">
-        WITH TopComments AS (
-            SELECT
-                id AS comment_id,
-                post_id,
-                user_id,
-                content,
-                create_time
-            FROM tbl_comment
-            WHERE post_id = #{postId} AND parent_comment_id IS NULL
-            ORDER BY create_time DESC
-            LIMIT #{page}, 10
-        ),
-        ChildCommentCounts AS (
+    <select id="selectParentCommentList" resultType="org.drift.common.pojo.comment.CommentDto">
+        SELECT
+            id AS commentId,
+            user_id AS userId,
+            content,
+            create_time AS createTime
+        FROM tbl_comment
+        WHERE post_id = #{postId} AND parent_comment_id IS NULL
+        ORDER BY create_time DESC
+        LIMIT #{page}, 10
+    </select>
+
+    <select id="selectChildCommentList" resultType="org.drift.common.pojo.comment.CommentDto">
+        SELECT
+            t1.parent_comment_id AS parentCommentId,
+            t1.id AS commentId,
+            t1.user_id AS userId,
+            t1.content,
+            t1.create_time AS createTime,
+            COUNT(*) OVER (PARTITION BY t1.parent_comment_id) AS childCommentCount
+        FROM tbl_comment t1
+        INNER JOIN (
             SELECT
                 parent_comment_id,
-                COUNT(*) AS child_count
+                MAX(create_time) AS create_time
             FROM tbl_comment
-            WHERE parent_comment_id IS NOT NULL
+            WHERE reply_to_user_id IS NULL
+            AND parent_comment_id IN
+            <foreach collection="parentCommentIds" item="parentCommentId" open="(" separator="," close=")">
+                #{parentCommentId}
+            </foreach>
             GROUP BY parent_comment_id
-        ),
-        LatestChildComments AS (
-            SELECT
-                t1.parent_comment_id,
-                t1.id AS child_comment_id,
-                t1.user_id AS child_user_id,
-                t1.content AS child_content,
-                t1.create_time AS child_create_time
-            FROM tbl_comment t1
-            INNER JOIN (
-                SELECT
-                    parent_comment_id,
-                    MAX(create_time) AS max_create_time
-                FROM tbl_comment
-                WHERE parent_comment_id IS NOT NULL
-                GROUP BY parent_comment_id
-            ) t2
-            ON t1.parent_comment_id = t2.parent_comment_id AND t1.create_time = t2.max_create_time
-        )
-        SELECT
-            t1.comment_id AS commentId,
-            t1.user_id AS userId,
-            t1.content AS content,
-            t1.create_time AS createTime,
-            COALESCE(t2.child_count, 0) AS childCommentCount,
-            t3.child_comment_id AS childCommentId,
-            t3.child_user_id AS childUserId,
-            t3.child_content AS childContent,
-            t3.child_create_time AS childCreateTime
-        FROM TopComments t1
-        LEFT JOIN ChildCommentCounts t2 ON t1.comment_id = t2.parent_comment_id
-        LEFT JOIN LatestChildComments t3 ON t1.comment_id = t3.parent_comment_id
-        ORDER BY t1.create_time DESC;
+        ) t2
+        ON t1.parent_comment_id = t2.parent_comment_id AND t1.create_time = t2.create_time
+        WHERE t1.reply_to_user_id IS NULL
     </select>
 </mapper>

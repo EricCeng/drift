@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.drift.comment.mapper.CommentLikeMapper">
+    <select id="selectLikeCommentIdList" resultType="java.lang.Long">
+        SELECT comment_id
+        FROM tbl_comment_likes
+        WHERE user_id = #{userId} AND comment_id IN
+        <foreach collection="commentIds" item="commentId" open="(" separator="," close=")">
+            #{commentId}
+        </foreach>
+    </select>
+    <select id="selectCommentLikedCount" resultType="java.util.Map">
+        SELECT
+            comment_id,
+            COUNT(*) AS liked_count
+        FROM tbl_comment_likes
+        WHERE comment_id IN
+        <foreach collection="commentIds" item="commentId" open="(" separator="," close=")">
+            #{commentId}
+        </foreach>
+        GROUP BY comment_id;
+    </select>
+</mapper>
