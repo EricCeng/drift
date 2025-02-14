@@ -16,6 +16,8 @@ public class CommentDto {
     private Long userId;
     private String content;
     private Instant createTime;
+    private Boolean firstComment;
+    private Boolean topped;
     private Long parentCommentId;
     private Long childCommentCount;
 }

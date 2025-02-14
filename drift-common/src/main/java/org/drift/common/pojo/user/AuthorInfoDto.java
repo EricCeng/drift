@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class AuthorDto {
+public class AuthorInfoDto {
     @JsonProperty("author_id")
     private Long authorId;
     private String author;

@@ -14,5 +14,7 @@ import java.util.Set;
 public interface CommentMapper extends BaseMapper<Comment> {
     List<CommentDto> selectParentCommentList(Long postId, Integer page);
 
-    List<CommentDto> selectChildCommentList(Set<Long> parentCommentIds);
+    List<CommentDto> selectChildCommentList(Set<Long> parentCommentIds, Long authorId);
+
+    List<CommentDto> selectChildCommentList(Long parentCommentId, Long topChildCommentId, Integer page);
 }

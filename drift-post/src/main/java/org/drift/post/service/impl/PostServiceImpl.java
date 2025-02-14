@@ -9,7 +9,7 @@ import org.drift.common.feign.UserServiceClient;
 import org.drift.common.pojo.like.PostLikedCountDto;
 import org.drift.common.pojo.post.PostDetailResponse;
 import org.drift.common.pojo.post.PostResponse;
-import org.drift.common.pojo.user.AuthorDto;
+import org.drift.common.pojo.user.AuthorInfoDto;
 import org.drift.common.pojo.user.UserInfoResponse;
 import org.drift.common.pojo.user.UserRequest;
 import org.drift.common.util.DateUtil;
@@ -101,7 +101,7 @@ public class PostServiceImpl implements PostService {
                     .setPostId(postId)
                     .setTitle(post.getTitle())
                     .setFirstImageUrl("")
-                    .setAuthorInfo(new AuthorDto()
+                    .setAuthorInfo(new AuthorInfoDto()
                             .setAuthorId(post.getUserId())
                             .setAuthor(userInfo.getUsername())
                             .setAuthorAvatarUrl(userInfo.getAvatarUrl())
@@ -132,7 +132,7 @@ public class PostServiceImpl implements PostService {
                     .setPostId(postId)
                     .setTitle(post.getTitle())
                     .setFirstImageUrl("")
-                    .setAuthorInfo(new AuthorDto()
+                    .setAuthorInfo(new AuthorInfoDto()
                             .setAuthorId(post.getUserId())
                             .setAuthor(authorBasicInfo.getUsername())
                             .setAuthorAvatarUrl(authorBasicInfo.getAvatarUrl())
@@ -181,7 +181,7 @@ public class PostServiceImpl implements PostService {
         // 获取动态评论数
         Long commentCount = commentServiceClient.getPostCommentCount(postId).getData();
         return new PostDetailResponse()
-                .setAuthorInfo(new AuthorDto()
+                .setAuthorInfo(new AuthorInfoDto()
                         .setAuthorId(authorId)
                         .setAuthor(authorBasicInfo.getUsername())
                         .setAuthorAvatarUrl(authorBasicInfo.getAvatarUrl())
@@ -224,7 +224,7 @@ public class PostServiceImpl implements PostService {
                     .setTitle(post.getTitle())
                     .setFirstImageUrl("")
                     .setReleaseTime(DateUtil.format(post.getCreateTime()))
-                    .setAuthorInfo(new AuthorDto()
+                    .setAuthorInfo(new AuthorInfoDto()
                             .setAuthorId(authorBasicInfo.getUserId())
                             .setAuthor(authorBasicInfo.getUsername())
                             .setAuthorAvatarUrl(authorBasicInfo.getAvatarUrl())

@@ -8,8 +8,8 @@
             content,
             create_time AS createTime
         FROM tbl_comment
-        WHERE post_id = #{postId} AND parent_comment_id IS NULL
-        ORDER BY create_time DESC
+        WHERE post_id = #{postId} AND parent_comment_id IS NULL AND random_order
+        ORDER BY topped DESC, random_order DESC
         LIMIT #{page}, 10
     </select>
 
@@ -20,21 +20,41 @@
             t1.user_id AS userId,
             t1.content,
             t1.create_time AS createTime,
-            COUNT(*) OVER (PARTITION BY t1.parent_comment_id) AS childCommentCount
-        FROM tbl_comment t1
-        INNER JOIN (
+            t1.child_comment_count AS childCommentCount
+        FROM (
             SELECT
+                id,
                 parent_comment_id,
-                MAX(create_time) AS create_time
+                user_id,
+                content,
+                create_time,
+                COUNT(*) OVER (PARTITION BY parent_comment_id) AS child_comment_count
             FROM tbl_comment
             WHERE reply_to_user_id IS NULL
-            AND parent_comment_id IN
-            <foreach collection="parentCommentIds" item="parentCommentId" open="(" separator="," close=")">
-                #{parentCommentId}
-            </foreach>
-            GROUP BY parent_comment_id
+              AND parent_comment_id IN
+              <foreach collection="parentCommentIds" item="parentCommentId" open="(" separator="," close=")">
+                  #{parentCommentId}
+              </foreach>
+        ) t1
+        INNER JOIN (
+            SELECT
+                id
+            FROM (
+                SELECT
+                    id,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY parent_comment_id
+                        ORDER BY IF(user_id = #{authorId}, 1, 2), create_time
+                    ) AS row_num
+                FROM tbl_comment
+                WHERE reply_to_user_id IS NULL
+                  AND parent_comment_id IN
+                  <foreach collection="parentCommentIds" item="parentCommentId" open="(" separator="," close=")">
+                      #{parentCommentId}
+                  </foreach>
+            ) t
+            WHERE row_num = 1
         ) t2
-        ON t1.parent_comment_id = t2.parent_comment_id AND t1.create_time = t2.create_time
-        WHERE t1.reply_to_user_id IS NULL
+        ON t1.id = t2.id
     </select>
 </mapper>

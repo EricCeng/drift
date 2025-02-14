@@ -3,7 +3,7 @@ package org.drift.common.pojo.post;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.drift.common.pojo.user.AuthorDto;
+import org.drift.common.pojo.user.AuthorInfoDto;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
 @Accessors(chain = true)
 public class PostDetailResponse {
     @JsonProperty("author_info")
-    private AuthorDto authorInfo;
+    private AuthorInfoDto authorInfo;
     @JsonProperty("post_id")
     private Long postId;
     private String title;

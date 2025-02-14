@@ -3,6 +3,7 @@ package org.drift.comment.controller;
 import org.drift.comment.service.CommentService;
 import org.drift.common.api.CommonResult;
 import org.drift.common.pojo.comment.CommentRequest;
+import org.drift.common.pojo.comment.CommentListResponse;
 import org.drift.common.pojo.comment.CommentResponse;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,9 +28,17 @@ public class CommentController {
     }
 
     @GetMapping("/list")
-    public CommonResult<List<CommentResponse>> getPostCommentList(@RequestParam("post_id") Long postId,
-                                                                  @RequestParam("page") Integer page) {
-        return CommonResult.success(commentService.getPostCommentList(postId, page));
+    public CommonResult<List<CommentListResponse>> getPostCommentList(@RequestParam("post_id") Long postId,
+                                                                      @RequestParam(value = "author_id", required = false) Long authorId,
+                                                                      @RequestParam("page") Integer page) {
+        return CommonResult.success(commentService.getPostCommentList(postId, authorId, page));
+    }
+
+    @GetMapping("/child_comment_list")
+    public CommonResult<List<CommentResponse>> getChildCommentList(@RequestParam("parent_comment_id") Long parentCommentId,
+                                                                   @RequestParam("top_child_comment_id") Long topChildCommentId,
+                                                                   @RequestParam("page") Integer page) {
+        return CommonResult.success(commentService.getChildCommentList(parentCommentId, topChildCommentId, page));
     }
 
     @PostMapping("/publish")

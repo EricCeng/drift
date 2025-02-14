@@ -27,6 +27,12 @@ public class Comment {
     private Long replyToUserId;
     @TableField("content")
     private String content;
+    @TableField("random_order")
+    private String randomOrder;
+    @TableField("first_comment")
+    private Boolean firstComment;
+    @TableField("topped")
+    private Boolean topped;
     @TableField("create_time")
     private Instant createTime;
 }

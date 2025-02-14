@@ -74,6 +74,9 @@ create table tbl_comment
     parent_comment_id bigint unsigned                    null comment '父评论ID',
     reply_to_user_id  bigint                             null comment '回复的目标用户ID',
     content           varchar(255)                       not null comment '评论内容',
+    random_order      varchar(255)                       not null comment '唯一的随机排序值',
+    first_comment     tinyint(1) default 0               not null comment '首评标志',
+    topped            tinyint(1) default 0               not null comment '置顶标志',
     create_time       datetime default CURRENT_TIMESTAMP not null comment '创建时间'
 )
     comment '评论表';
