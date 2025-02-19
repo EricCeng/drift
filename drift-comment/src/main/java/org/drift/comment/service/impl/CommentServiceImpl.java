@@ -9,8 +9,8 @@ import org.drift.common.api.CommonResult;
 import org.drift.common.context.UserContextHolder;
 import org.drift.common.feign.UserServiceClient;
 import org.drift.common.pojo.comment.CommentDto;
-import org.drift.common.pojo.comment.CommentRequest;
 import org.drift.common.pojo.comment.CommentListResponse;
+import org.drift.common.pojo.comment.CommentRequest;
 import org.drift.common.pojo.comment.CommentResponse;
 import org.drift.common.pojo.user.AuthorInfoDto;
 import org.drift.common.pojo.user.UserInfoResponse;
@@ -61,84 +61,105 @@ public class CommentServiceImpl implements CommentService {
             authorId = UserContextHolder.getUserContext();
         }
         // 获取一级评论列表
-        List<CommentDto> parentCommentList = commentMapper.selectParentCommentList(postId, page * 10);
-        if (ObjectUtils.isEmpty(parentCommentList)) {
+        List<CommentDto> commentList = commentMapper.selectCommentList(postId, page * 10);
+        if (ObjectUtils.isEmpty(commentList)) {
             return List.of();
         }
         // 获取一级评论 comment id
-        Set<Long> parentCommentIdSet = parentCommentList.stream().map(CommentDto::getCommentId).collect(Collectors.toSet());
+        Set<Long> commentIdSet = commentList.stream().map(CommentDto::getCommentId).collect(Collectors.toSet());
         // 获取一级评论 user id
-        Set<Long> userIdSet = parentCommentList.stream().map(CommentDto::getUserId).collect(Collectors.toSet());
+        Set<Long> userIdSet = commentList.stream().map(CommentDto::getUserId).collect(Collectors.toSet());
         // 根据一级评论 comment id 列表获取评论最早的一条二级评论（动态作者回复的优先）及子评论数
-        List<CommentDto> childCommentList = commentMapper.selectChildCommentList(parentCommentIdSet, authorId);
-        Map<Long, CommentDto> childCommentMap = new HashMap<>(10);
-        if (!ObjectUtils.isEmpty(childCommentList)) {
-            childCommentMap = childCommentList.stream().collect(Collectors.toMap(CommentDto::getParentCommentId, comment -> comment));
+        List<CommentDto> earliestReplyList = commentMapper.selectEarliestReplyList(commentIdSet, authorId);
+        Map<Long, CommentDto> earliestReplyMap = new HashMap<>(10);
+        if (!ObjectUtils.isEmpty(earliestReplyList)) {
+            earliestReplyMap = earliestReplyList.stream().collect(Collectors.toMap(CommentDto::getParentCommentId, comment -> comment));
             // 加入二级评论 comment id
-            parentCommentIdSet.addAll(childCommentList.stream().map(CommentDto::getCommentId).collect(Collectors.toSet()));
+            commentIdSet.addAll(earliestReplyList.stream().map(CommentDto::getCommentId).collect(Collectors.toSet()));
             // 加入二级评论 user id
-            userIdSet.addAll(childCommentList.stream().map(CommentDto::getUserId).collect(Collectors.toSet()));
+            userIdSet.addAll(earliestReplyList.stream().map(CommentDto::getUserId).collect(Collectors.toSet()));
         }
         // 根据 comment id 列表获取当前登录用户是否点赞对应评论
-        List<Long> likeCommentIdList = commentLikeMapper.selectLikeCommentIdList(UserContextHolder.getUserContext(), parentCommentIdSet);
+        List<Long> likeCommentIdList = commentLikeMapper.selectLikeCommentIdList(UserContextHolder.getUserContext(), commentIdSet);
         // 根据 comment id 列表获取每条评论的点赞数
-        Map<Long, Long> commentLikedCountMap = commentLikeMapper.selectCommentLikedCount(parentCommentIdSet);
+        Map<Long, Long> commentLikedCountMap = commentLikeMapper.selectCommentLikedCount(commentIdSet);
         // 根据 user id 列表，获取对应用户信息
-        Map<Long, UserInfoResponse> authorBasicInfoMap = getAuthorBasicInfoMap(userIdSet);
+        Map<Long, AuthorInfoDto> authorBasicInfoMap = getAuthorBasicInfoMap(userIdSet);
         // 整合数据
-        return merge(parentCommentList, childCommentMap, authorBasicInfoMap, commentLikedCountMap, likeCommentIdList);
+        return merge(commentList, earliestReplyMap, authorBasicInfoMap, commentLikedCountMap, likeCommentIdList);
     }
 
     @Override
-    public List<CommentResponse> getChildCommentList(Long parentCommentId, Long topChildCommentId, Integer page) {
-
-
-
-        return List.of();
+    public List<CommentResponse> getCommentReplyList(Long commentId, Long earliestReplyId, Integer page) {
+        List<CommentDto> replyList = commentMapper.selectCommentReplyList(commentId, earliestReplyId, page * 5);
+        if (ObjectUtils.isEmpty(replyList)) {
+            return List.of();
+        }
+        // 获取回复的 comment id
+        Set<Long> commentIdSet = replyList.stream().map(CommentDto::getCommentId).collect(Collectors.toSet());
+        // 获取回复的 user id
+        Set<Long> userIdSet = replyList.stream().map(CommentDto::getUserId).collect(Collectors.toSet());
+        // 获取回复的 reply_user_id
+        Set<Long> replyUserIdSet = replyList.stream().map(CommentDto::getReplyToUserId).collect(Collectors.toSet());
+        userIdSet.addAll(replyUserIdSet);
+        // 根据 comment id 列表获取当前登录用户是否点赞对应评论
+        List<Long> likeCommentIdList = commentLikeMapper.selectLikeCommentIdList(UserContextHolder.getUserContext(), commentIdSet);
+        // 根据 comment id 列表获取每条评论的点赞数
+        Map<Long, Long> commentLikedCountMap = commentLikeMapper.selectCommentLikedCount(commentIdSet);
+        // 根据 user id 列表，获取对应用户信息
+        Map<Long, AuthorInfoDto> authorBasicInfoMap = getAuthorBasicInfoMap(userIdSet);
+        return replyList.stream().map(reply -> new CommentResponse()
+                .setCommentId(reply.getCommentId())
+                .setContent(reply.getContent())
+                .setReleaseTime(DateUtil.format(reply.getCreateTime()))
+                .setLikedCount(commentLikedCountMap.getOrDefault(reply.getCommentId(), 0L))
+                .setAuthorInfo(authorBasicInfoMap.get(reply.getUserId())
+                        .setLiked(likeCommentIdList.contains(reply.getCommentId())))
+                .setReplyToUserId(reply.getReplyToUserId())
+                .setReplyToUserName(authorBasicInfoMap.get(reply.getReplyToUserId()).getAuthor())
+        ).toList();
     }
 
-    private static List<CommentListResponse> merge(List<CommentDto> parentCommentList,
-                                                   Map<Long, CommentDto> childCommentMap,
-                                                   Map<Long, UserInfoResponse> authorBasicInfoMap,
+    private static List<CommentListResponse> merge(List<CommentDto> commentList,
+                                                   Map<Long, CommentDto> earliestReplyMap,
+                                                   Map<Long, AuthorInfoDto> authorBasicInfoMap,
                                                    Map<Long, Long> commentLikedCountMap,
                                                    List<Long> likeCommentIdList) {
-        return parentCommentList.stream().map(parentComment -> {
-            UserInfoResponse parentAuthorInfo = authorBasicInfoMap.get(parentComment.getUserId());
+        return commentList.stream().map(comment -> {
             CommentListResponse commentListResponse = new CommentListResponse()
-                    .setParentComment(new CommentResponse()
-                            .setCommentId(parentComment.getCommentId())
-                            .setContent(parentComment.getContent())
-                            .setReleaseTime(DateUtil.format(parentComment.getCreateTime()))
-                            .setCommentLikedCount(commentLikedCountMap.get(parentComment.getCommentId()))
-                            .setAuthorInfo(new AuthorInfoDto()
-                                    .setAuthorId(parentAuthorInfo.getUserId())
-                                    .setAuthor(parentAuthorInfo.getUsername())
-                                    .setAuthorAvatarUrl(parentAuthorInfo.getAvatarUrl())
-                                    .setLiked(likeCommentIdList.contains(parentComment.getCommentId()))))
-                    .setChildCommentCount(0L);
-            CommentDto childComment = childCommentMap.get(parentComment.getCommentId());
-            if (!ObjectUtils.isEmpty(childComment)) {
-                UserInfoResponse childAuthorInfo = authorBasicInfoMap.get(childComment.getUserId());
-                commentListResponse.setChildCommentCount(childComment.getChildCommentCount() - 1)
-                        .setChildComment(new CommentResponse()
-                                .setCommentId(childComment.getCommentId())
-                                .setContent(childComment.getContent())
-                                .setReleaseTime(DateUtil.format(childComment.getCreateTime()))
-                                .setCommentLikedCount(commentLikedCountMap.get(childComment.getCommentId()))
-                                .setAuthorInfo(new AuthorInfoDto()
-                                        .setAuthorId(childAuthorInfo.getUserId())
-                                        .setAuthor(childAuthorInfo.getUsername())
-                                        .setAuthorAvatarUrl(childAuthorInfo.getAvatarUrl())
-                                        .setLiked(likeCommentIdList.contains(childComment.getCommentId()))));
+                    .setComment(new CommentResponse()
+                            .setCommentId(comment.getCommentId())
+                            .setContent(comment.getContent())
+                            .setReleaseTime(DateUtil.format(comment.getCreateTime()))
+                            .setLikedCount(commentLikedCountMap.get(comment.getCommentId()))
+                            .setAuthorInfo(authorBasicInfoMap.get(comment.getUserId())
+                                    .setLiked(likeCommentIdList.contains(comment.getCommentId()))))
+                    .setReplyCount(0L);
+            CommentDto earliestReply = earliestReplyMap.get(comment.getCommentId());
+            if (!ObjectUtils.isEmpty(earliestReply)) {
+                commentListResponse.setReplyCount(earliestReply.getChildCommentCount() - 1)
+                        .setEarliestReply(new CommentResponse()
+                                .setCommentId(earliestReply.getCommentId())
+                                .setContent(earliestReply.getContent())
+                                .setReleaseTime(DateUtil.format(earliestReply.getCreateTime()))
+                                .setLikedCount(commentLikedCountMap.get(earliestReply.getCommentId()))
+                                .setAuthorInfo(authorBasicInfoMap.get(earliestReply.getUserId())
+                                        .setLiked(likeCommentIdList.contains(earliestReply.getCommentId()))));
             }
             return commentListResponse;
         }).toList();
     }
 
-    private Map<Long, UserInfoResponse> getAuthorBasicInfoMap(Set<Long> userIdSet) {
+    private Map<Long, AuthorInfoDto> getAuthorBasicInfoMap(Set<Long> userIdSet) {
         CommonResult<List<UserInfoResponse>> authorBasicInfoList =
                 userServiceClient.getUserBasicInfoList(new UserRequest().setUserIds(userIdSet));
         return authorBasicInfoList.getData().stream()
-                .collect(Collectors.toMap(UserInfoResponse::getUserId, user -> user));
+                .collect(Collectors.toMap(
+                        UserInfoResponse::getUserId,
+                        user -> new AuthorInfoDto()
+                                .setAuthorId(user.getUserId())
+                                .setAuthor(user.getUsername())
+                                .setAuthorAvatarUrl(user.getAvatarUrl())
+                ));
     }
 }

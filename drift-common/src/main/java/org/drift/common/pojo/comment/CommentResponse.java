@@ -17,13 +17,13 @@ public class CommentResponse {
     private String content;
     @JsonProperty("release_time")
     private String releaseTime;
-    @JsonProperty("comment_liked_count")
-    private Long commentLikedCount;
+    @JsonProperty("liked_count")
+    private Long likedCount;
     @JsonProperty("author_info")
     private AuthorInfoDto authorInfo;
 
     @JsonProperty("reply_to_user_id")
     private Long replyToUserId;
     @JsonProperty("reply_to_user_name")
-    private Long replyToUserName;
+    private String replyToUserName;
 }

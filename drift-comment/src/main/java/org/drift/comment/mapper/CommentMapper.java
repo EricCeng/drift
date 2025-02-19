@@ -12,9 +12,9 @@ import java.util.Set;
  * @date 2025/2/9 15:02
  */
 public interface CommentMapper extends BaseMapper<Comment> {
-    List<CommentDto> selectParentCommentList(Long postId, Integer page);
+    List<CommentDto> selectCommentList(Long postId, Integer page);
 
-    List<CommentDto> selectChildCommentList(Set<Long> parentCommentIds, Long authorId);
+    List<CommentDto> selectEarliestReplyList(Set<Long> parentCommentIds, Long authorId);
 
-    List<CommentDto> selectChildCommentList(Long parentCommentId, Long topChildCommentId, Integer page);
+    List<CommentDto> selectCommentReplyList(Long commentId, Long earliestReplyId, Integer page);
 }

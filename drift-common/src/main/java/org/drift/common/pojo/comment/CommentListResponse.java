@@ -11,10 +11,11 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class CommentListResponse {
-    @JsonProperty("parent_comment")
-    private CommentResponse parentComment;
-    @JsonProperty("child_comment")
-    private CommentResponse childComment;
-    @JsonProperty("child_comment_count")
-    private Long childCommentCount;
+    @JsonProperty("comment")
+    private CommentResponse comment;
+    @JsonProperty("earliest_reply")
+    private CommentResponse earliestReply;
+    @JsonProperty("reply_count")
+    private Long replyCount;
+    private Boolean first;
 }

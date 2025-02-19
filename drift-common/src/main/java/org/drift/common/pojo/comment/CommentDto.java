@@ -20,4 +20,6 @@ public class CommentDto {
     private Boolean topped;
     private Long parentCommentId;
     private Long childCommentCount;
+
+    private Long replyToUserId;
 }

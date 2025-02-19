@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="org.drift.comment.mapper.CommentMapper">
-    <select id="selectParentCommentList" resultType="org.drift.common.pojo.comment.CommentDto">
+    <select id="selectCommentList" resultType="org.drift.common.pojo.comment.CommentDto">
         SELECT
             id AS commentId,
             user_id AS userId,
             content,
             create_time AS createTime
         FROM tbl_comment
-        WHERE post_id = #{postId} AND parent_comment_id IS NULL AND random_order
-        ORDER BY topped DESC, random_order DESC
+        WHERE post_id = #{postId} AND parent_comment_id IS NULL
+        ORDER BY create_time DESC
         LIMIT #{page}, 10
     </select>
 
-    <select id="selectChildCommentList" resultType="org.drift.common.pojo.comment.CommentDto">
+    <select id="selectEarliestReplyList" resultType="org.drift.common.pojo.comment.CommentDto">
         SELECT
             t1.parent_comment_id AS parentCommentId,
             t1.id AS commentId,
@@ -56,5 +56,18 @@
             WHERE row_num = 1
         ) t2
         ON t1.id = t2.id
+    </select>
+
+    <select id="selectCommentReplyList" resultType="org.drift.common.pojo.comment.CommentDto">
+        SELECT
+            id AS commentId,
+            user_id AS userId,
+            reply_to_user_id AS replyToUserId,
+            content,
+            create_time
+        FROM tbl_comments
+        WHERE parent_comment_id = #{commentId} AND id != #{earliestReplyId}
+        ORDER BY create_time
+        LIMIT #{page}, 5
     </select>
 </mapper>

@@ -65,7 +65,7 @@ create table tbl_follows
     create_time datetime default CURRENT_TIMESTAMP not null comment '创建时间'
 )
     comment '关注表';
-create table tbl_comment
+create table tbl_comments
 (
     id                bigint unsigned auto_increment comment '评论ID'
         primary key,
@@ -75,7 +75,7 @@ create table tbl_comment
     reply_to_user_id  bigint                             null comment '回复的目标用户ID',
     content           varchar(255)                       not null comment '评论内容',
     random_order      varchar(255)                       not null comment '唯一的随机排序值',
-    first_comment     tinyint(1) default 0               not null comment '首评标志',
+    first_comment      tinyint(1) default 0               not null comment '首评标志',
     topped            tinyint(1) default 0               not null comment '置顶标志',
     create_time       datetime default CURRENT_TIMESTAMP not null comment '创建时间'
 )

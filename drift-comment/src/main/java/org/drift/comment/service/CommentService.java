@@ -1,7 +1,7 @@
 package org.drift.comment.service;
 
-import org.drift.common.pojo.comment.CommentRequest;
 import org.drift.common.pojo.comment.CommentListResponse;
+import org.drift.common.pojo.comment.CommentRequest;
 import org.drift.common.pojo.comment.CommentResponse;
 
 import java.util.List;
@@ -17,5 +17,5 @@ public interface CommentService {
 
     List<CommentListResponse> getPostCommentList(Long postId, Long authorId, Integer page);
 
-    List<CommentResponse> getChildCommentList(Long parentCommentId, Long topChildCommentId, Integer page);
+    List<CommentResponse> getCommentReplyList(Long commentId, Long earliestReplyId, Integer page);
 }
