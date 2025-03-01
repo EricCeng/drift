@@ -7,9 +7,9 @@
             user_id AS userId,
             content,
             create_time AS createTime
-        FROM tbl_comment
+        FROM tbl_comments
         WHERE post_id = #{postId} AND parent_comment_id IS NULL
-        ORDER BY create_time DESC
+        ORDER BY random_order DESC
         LIMIT #{page}, 10
     </select>
 
@@ -29,7 +29,7 @@
                 content,
                 create_time,
                 COUNT(*) OVER (PARTITION BY parent_comment_id) AS child_comment_count
-            FROM tbl_comment
+            FROM tbl_comments
             WHERE reply_to_user_id IS NULL
               AND parent_comment_id IN
               <foreach collection="parentCommentIds" item="parentCommentId" open="(" separator="," close=")">
@@ -46,7 +46,7 @@
                         PARTITION BY parent_comment_id
                         ORDER BY IF(user_id = #{authorId}, 1, 2), create_time
                     ) AS row_num
-                FROM tbl_comment
+                FROM tbl_comments
                 WHERE reply_to_user_id IS NULL
                   AND parent_comment_id IN
                   <foreach collection="parentCommentIds" item="parentCommentId" open="(" separator="," close=")">

@@ -100,7 +100,8 @@ public class CommentServiceImpl implements CommentService {
         // 获取回复的 user id
         Set<Long> userIdSet = replyList.stream().map(CommentDto::getUserId).collect(Collectors.toSet());
         // 获取回复的 reply_user_id
-        Set<Long> replyUserIdSet = replyList.stream().map(CommentDto::getReplyToUserId).collect(Collectors.toSet());
+        Set<Long> replyUserIdSet = replyList.stream().map(CommentDto::getReplyToUserId)
+                .filter(replyToUserId -> !ObjectUtils.isEmpty(replyToUserId)).collect(Collectors.toSet());
         userIdSet.addAll(replyUserIdSet);
         // 根据 comment id 列表获取当前登录用户是否点赞对应评论
         List<Long> likeCommentIdList = commentLikeMapper.selectLikeCommentIdList(UserContextHolder.getUserContext(), commentIdSet);
@@ -108,15 +109,20 @@ public class CommentServiceImpl implements CommentService {
         Map<Long, Long> commentLikedCountMap = commentLikeMapper.selectCommentLikedCount(commentIdSet);
         // 根据 user id 列表，获取对应用户信息
         Map<Long, AuthorInfoDto> authorBasicInfoMap = getAuthorBasicInfoMap(userIdSet);
-        return replyList.stream().map(reply -> new CommentResponse()
-                .setCommentId(reply.getCommentId())
-                .setContent(reply.getContent())
-                .setReleaseTime(DateUtil.format(reply.getCreateTime()))
-                .setLikedCount(commentLikedCountMap.getOrDefault(reply.getCommentId(), 0L))
-                .setAuthorInfo(authorBasicInfoMap.get(reply.getUserId())
-                        .setLiked(likeCommentIdList.contains(reply.getCommentId())))
-                .setReplyToUserId(reply.getReplyToUserId())
-                .setReplyToUserName(authorBasicInfoMap.get(reply.getReplyToUserId()).getAuthor())
+        return replyList.stream().map(reply -> {
+                    CommentResponse commentResponse = new CommentResponse()
+                            .setCommentId(reply.getCommentId())
+                            .setContent(reply.getContent())
+                            .setReleaseTime(DateUtil.format(reply.getCreateTime()))
+                            .setLikedCount(commentLikedCountMap.getOrDefault(reply.getCommentId(), 0L))
+                            .setAuthorInfo(authorBasicInfoMap.get(reply.getUserId())
+                                    .setLiked(likeCommentIdList.contains(reply.getCommentId())));
+                    if (!ObjectUtils.isEmpty(reply.getReplyToUserId())) {
+                        commentResponse.setReplyToUserId(reply.getReplyToUserId())
+                                .setReplyToUserName(authorBasicInfoMap.get(reply.getReplyToUserId()).getAuthor());
+                    }
+                    return commentResponse;
+                }
         ).toList();
     }
 

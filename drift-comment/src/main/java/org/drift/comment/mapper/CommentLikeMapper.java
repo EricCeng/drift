@@ -16,5 +16,5 @@ public interface CommentLikeMapper extends BaseMapper<CommentLike> {
     List<Long> selectLikeCommentIdList(Long userId, Set<Long> commentIds);
 
     @MapKey("comment_id")
-    Map<Long, Long> selectCommentLikedCount(Set<Long> commentIdSet);
+    Map<Long, Long> selectCommentLikedCount(Set<Long> commentIds);
 }
